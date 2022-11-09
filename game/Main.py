@@ -18,7 +18,7 @@ Running = True
 pg.init()
 pg.mixer.init
 #define the width and height of the windo
-pg.display.set_mode(WIDTH,HIEGHT)
+pg.display.set_mode((WIDTH,HIEGHT))
 #Title of game window
 pg.display.get_caption("Fighting Game")
 #create a easier variable of the clock so i dont have to type the full thing out
