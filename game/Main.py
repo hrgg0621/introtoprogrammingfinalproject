@@ -22,14 +22,37 @@ pg.display.set_caption("Brawler")
 class Brawler(Sprite):
     def __init__(self):
         Sprite.__init__(self)
-        self.image = pg.Surface((50,100))
+        self.image = pg.Surface((100,200))
         self.image.fill((0,255,0))
         self.rect = self.image.get_rect()
-        self.pos = vec(WIDTH/2,HIEGHT - 100)
+        self.pos = vec(100,HIEGHT)
         self.vel = vec(0,0)
         self.acc = vec(0,0)
+    def controls(self):
+        key = pg.key.get_pressed()
+        #move to the right
+        if key[pg.K_d]:
+            self.acc.x = 5
+        #move to the left
+        if key[pg.K_a]:
+            self.acc.x = -5
     def update(self):
+        self.acc = vec(0,0)
+        self.controls()
+        # friction
+        self.acc.x += self.vel.x * -0.1
+        
+        self.vel += self.acc
+        self.pos += self.vel + 0.5 * self.acc
+        #Staying on the screen
+        if self.pos.x > 1000:
+            self.pos.x = 1000
+        if self.pos.x < 0:
+            self.pos.x = 0
+        
         self.rect.midbottom = self.pos
+
+
         
  
 
