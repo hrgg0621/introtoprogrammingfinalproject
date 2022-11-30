@@ -40,7 +40,7 @@ clock = pg.time.Clock()
 #instanciate classes
 player1 = Brawler()
 #create shortcut for groups
-all_sprites = pg.sprite.Group
+all_sprites = pg.sprite.Group()
 #add objects to groups
 all_sprites.add(player1)
 #Game loop
@@ -54,8 +54,9 @@ while Running:
     all_sprites.update()
     #draw
     
-    # screen.fill(red)
+    screen.fill(red)
     player1.image.fill((0,255,0))
+    all_sprites.draw(screen)
     pg.display.flip()
 pg.quit()
 quit()
