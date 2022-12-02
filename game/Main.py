@@ -11,10 +11,12 @@ pg.init
 vec = pg.math.Vector2
 Running = True
 red = (255,0,0)
+
 #initialize python and mixer
 pg.init
 pg.mixer.init
 pg.time.Clock.__init__
+
 #create the screen and add a caption
 screen = pg.display.set_mode((WIDTH, HIEGHT))
 pg.display.set_caption("Brawler")
@@ -24,6 +26,8 @@ class Brawler(Sprite):
         Sprite.__init__(self)
         self.image = pg.Surface((100,200))
         self.image.fill((0,255,0))
+        
+        
         self.rect = self.image.get_rect()
         self.pos = vec(100,HIEGHT)
         self.vel = vec(0,0)
@@ -36,6 +40,8 @@ class Brawler(Sprite):
         #move to the left
         if key[pg.K_a]:
             self.acc.x = -5
+        
+            
     def update(self):
         self.acc = vec(0,0)
         self.controls()
@@ -62,17 +68,20 @@ class Brawler(Sprite):
 clock = pg.time.Clock()
 #instanciate classes
 player1 = Brawler()
+
 #create shortcut for groups
 all_sprites = pg.sprite.Group()
 #add objects to groups
 all_sprites.add(player1)
 #Game loop
+
 while Running:
     clock.tick(FPS)
     for event in pg.event.get():
         #check for closed window
         if event.type == pg.QUIT:
             Running = False
+        
     #update
     all_sprites.update()
     #draw
