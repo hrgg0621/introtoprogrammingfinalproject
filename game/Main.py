@@ -126,9 +126,11 @@ clock = pg.time.Clock()
 player1 = Brawler("left")
 player2 = Brawler("")
 health1 = Healthbar(250)
+
 #create shortcut for groups
 all_sprites = pg.sprite.Group()
 all_players = pg.sprite.Group()
+all_attacks = pg.sprite.Group()
 #add objects to groups
 all_players.add(player2)
 all_sprites.add(player1,player2, health1)
@@ -136,11 +138,7 @@ all_sprites.add(player1,player2, health1)
 
 while Running:
     clock.tick(FPS)
-    #collision between fighters
-    bump = pg.Rect.colliderect(player1.rect,player2.rect)
-    if bump:
-        player1.pos -= player1.vel + 0.5 * player1.acc
-        player2.pos -= player2.vel + 0.5 * player2.acc
+
     
         
     
@@ -153,13 +151,16 @@ while Running:
         if event.type == pg.KEYDOWN: 
             if event.key == pg.K_f:
                 attack1 = Attacks((player1.pos.x + 50), player1.pos.y, "left")
+                all_attacks.add(attack1)
                 all_sprites.add(attack1)
+               
                 #change variable so players cant walk and attack at the same time
                 attacking = True
             if event.key == pg.K_RALT:
                 attack2 = Attacks((player2.pos.x -50),player2.pos.y,"")
                 all_sprites.add(attack2)
                 attacking = True
+    
         #kill the attack class when the button is released
         if event.type == pg.KEYUP:
             if event.key == pg.K_f:
@@ -169,6 +170,18 @@ while Running:
             if event.key == pg.K_RALT:
                 all_sprites.remove(attack2)
                 attacking = False
+    
+    ##Collisions##
+    #collision between fighters
+    bump = pg.Rect.colliderect(player1.rect,player2.rect)
+    if bump:
+        player1.pos -= player1.vel + 0.5 * player1.acc
+        player2.pos -= player2.vel + 0.5 * player2.acc
+    hits = pg.sprite.spritecollide(player2,all_attacks,False)
+    if hits:
+        print("youch")
+  
+    
                 
                 
 
