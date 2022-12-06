@@ -91,17 +91,21 @@ class Brawler(Sprite):
 
       
 class Attacks(Sprite):
-    def __init__(self,posx, posy):
+    def __init__(self,posx, posy, side):
         Sprite.__init__(self)
         #temporary design of attack
         self.image = pg.Surface((100,200))
         self.image.fill((0,0,255))
         self.rect = self.image.get_rect()
+        self.side = side
         #I need the attack box to move with the player and sense i cant instanciate the class untill later I have to do this
         self.pos = vec(posx,posy)
     def update(self):
         #The players can't move and attack at the same time so I just need to set the pos equal to the rect
-        self.rect.bottomleft = self.pos
+        if self.side == "left":
+            self.rect.bottomleft = self.pos
+        else:
+            self.rect.bottomright = self.pos
 
 class Healthbar(Sprite):
     def __init__(self, amount):
@@ -126,14 +130,19 @@ health1 = Healthbar(250)
 all_sprites = pg.sprite.Group()
 all_players = pg.sprite.Group()
 #add objects to groups
-all_players.add(player1,player2)
+all_players.add(player2)
 all_sprites.add(player1,player2, health1)
 #Game loop
 
 while Running:
     clock.tick(FPS)
-    bump = pg.sprite.spritecollide(player1 ,all_players,False)
+    #collision between fighters
+    bump = pg.Rect.colliderect(player1.rect,player2.rect)
+    if bump:
+        player1.pos -= player1.vel + 0.5 * player1.acc
+        player2.pos -= player2.vel + 0.5 * player2.acc
     
+        
     
     #make it easy to define events
     for event in pg.event.get():
@@ -141,17 +150,24 @@ while Running:
         if event.type == pg.QUIT:
             Running = False
         #insanciate the attack class when the button is pressed
-        if event.type == pg.KEYDOWN:
+        if event.type == pg.KEYDOWN: 
             if event.key == pg.K_f:
-                attack = Attacks((player1.pos.x + 50), player1.pos.y)
-                all_sprites.add(attack)
+                attack1 = Attacks((player1.pos.x + 50), player1.pos.y, "left")
+                all_sprites.add(attack1)
                 #change variable so players cant walk and attack at the same time
+                attacking = True
+            if event.key == pg.K_RALT:
+                attack2 = Attacks((player2.pos.x -50),player2.pos.y,"")
+                all_sprites.add(attack2)
                 attacking = True
         #kill the attack class when the button is released
         if event.type == pg.KEYUP:
             if event.key == pg.K_f:
-                all_sprites.remove(attack)
+                all_sprites.remove(attack1)
                 #once again change variable to enable walking
+                attacking = False
+            if event.key == pg.K_RALT:
+                all_sprites.remove(attack2)
                 attacking = False
                 
                 
@@ -161,7 +177,8 @@ while Running:
         
     #update
     all_sprites.update()
-
+    
+    
     #draw
     #temporary background
     screen.fill(red)
