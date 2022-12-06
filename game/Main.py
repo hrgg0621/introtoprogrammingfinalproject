@@ -11,7 +11,7 @@ pg.init
 vec = pg.math.Vector2
 Running = True
 red = (255,0,0)
-
+attacking = False
 #initialize python and mixer
 pg.init
 pg.mixer.init
@@ -28,8 +28,11 @@ class Brawler(Sprite):
         self.image.fill((0,255,0))
         
         
+
+        
         self.rect = self.image.get_rect()
         self.pos = vec(100,HIEGHT)
+        
         self.vel = vec(0,0)
         self.acc = vec(0,0)
     def controls(self):
@@ -40,11 +43,16 @@ class Brawler(Sprite):
         #move to the left
         if key[pg.K_a]:
             self.acc.x = -5
+
+            
+    
+        
         
             
     def update(self):
         self.acc = vec(0,0)
         self.controls()
+        
         # friction
         self.acc.x += self.vel.x * -0.1
         
@@ -55,13 +63,20 @@ class Brawler(Sprite):
             self.pos.x = 1000
         if self.pos.x < 0:
             self.pos.x = 0
-        
         self.rect.midbottom = self.pos
+    
 
-
+      
+class Attacks(Sprite):
+    def __init__(self, pos):
+        Sprite.__init__(self)
+        self.image = pg.Surface((100,200))
+        self.image.fill((0,0,255))
+        self.rect = self.image.get_rect()
+        self.pos = vec(pos)
         
- 
-
+    def update(self):
+        self.pos = self.rect.bottomleft
 
 
 #make pg.time.clock easier to access
@@ -81,14 +96,28 @@ while Running:
         #check for closed window
         if event.type == pg.QUIT:
             Running = False
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_f:
+                attack = Attacks((player1.pos.x +100, player1.pos.y))
+                print(attack.pos)
+                all_sprites.add(attack)
+        if event.type == pg.KEYUP:
+            if event.key == pg.K_f:
+                all_sprites.remove(attack)
+                
+                
+
+                               
+        
         
     #update
     all_sprites.update()
     #draw
     
     screen.fill(red)
-    player1.image.fill((0,255,0))
+    
     all_sprites.draw(screen)
+    
     pg.display.flip()
 pg.quit()
 quit()
