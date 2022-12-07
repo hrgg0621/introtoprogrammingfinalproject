@@ -15,8 +15,9 @@ Running = True
 red = (255,0,0)
 #attacking and running at the same time is imposible because of this variable
 attacking = False
-#This variable is unnecesary but I have'nt written it out yet
-health = 100
+
+hp1 = 250
+hp2 = 250
 #initialize python and mixer
 pg.init
 pg.mixer.init
@@ -108,13 +109,23 @@ class Attacks(Sprite):
             self.rect.bottomright = self.pos
 
 class Healthbar(Sprite):
-    def __init__(self, amount):
+    def __init__(self, amount, side):
         Sprite.__init__(self)
         #this code is super rudimentary and right now it's just a placeholder
-        self.image = pg.Surface((amount,25))
-        self.image.fill((0,255,0))
+        self.amount = amount
+        self.image = pg.Surface((self.amount,25))
+        
+        self.side = side
         self.rect = self.image.get_rect()
-        self.rect.topleft = (0,0)
+    def update(self):
+        if self.side == "left":
+            self.rect.topleft = (0,0)
+        else:
+            self.rect.topright = (WIDTH,0)
+        self.image = pg.Surface((self.amount,25))
+        self.image.fill((0,255,0))
+        
+            
     
     
        
@@ -125,7 +136,8 @@ clock = pg.time.Clock()
 #instanciate classes
 player1 = Brawler("left")
 player2 = Brawler("")
-health1 = Healthbar(250)
+health1 = Healthbar(hp1,"left")
+health2 = Healthbar(hp2,"")
 
 #create shortcut for groups
 all_sprites = pg.sprite.Group()
@@ -133,7 +145,7 @@ all_players = pg.sprite.Group()
 all_attacks = pg.sprite.Group()
 #add objects to groups
 all_players.add(player2)
-all_sprites.add(player1,player2, health1)
+all_sprites.add(player1,player2, health1, health2)
 #Game loop
 
 while Running:
@@ -159,16 +171,19 @@ while Running:
             if event.key == pg.K_RALT:
                 attack2 = Attacks((player2.pos.x -50),player2.pos.y,"")
                 all_sprites.add(attack2)
+                all_attacks.add(attack2)
                 attacking = True
     
         #kill the attack class when the button is released
         if event.type == pg.KEYUP:
             if event.key == pg.K_f:
                 all_sprites.remove(attack1)
+                all_attacks.remove(attack1)
                 #once again change variable to enable walking
                 attacking = False
             if event.key == pg.K_RALT:
                 all_sprites.remove(attack2)
+                all_attacks.remove(attack2)
                 attacking = False
     
     ##Collisions##
@@ -179,7 +194,14 @@ while Running:
         player2.pos -= player2.vel + 0.5 * player2.acc
     hits = pg.sprite.spritecollide(player2,all_attacks,False)
     if hits:
-        print("youch")
+        health2.amount -= 5
+        
+    hits2 = pg.sprite.spritecollide(player1,all_attacks,False)
+    if hits2:
+        health1.amount -= 5
+    #find a winner
+    if health1.amount <= 0:
+        print("player1 loses")
   
     
                 
