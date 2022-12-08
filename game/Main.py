@@ -4,20 +4,12 @@ Pygame: https://www.pygame.org/news
 import pygame as pg
 from pygame.sprite import Sprite
 from Settings import *
-
+from characters import *
 
 pg.init
 #variable for game loop
 vec = pg.math.Vector2
-#variable i use for my game loop to run
-Running = True
-#for know i just use this as a filler background
-red = (255,0,0)
-#attacking and running at the same time is imposible because of this variable
-attacking = False
 
-hp1 = 250
-hp2 = 250
 #initialize python and mixer
 pg.init
 pg.mixer.init
