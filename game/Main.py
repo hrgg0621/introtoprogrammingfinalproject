@@ -20,6 +20,15 @@ screen = pg.display.set_mode((WIDTH, HIEGHT))
 pg.display.set_caption("Brawler")
 #classes
 
+class Background(Sprite):
+    def __init__(self, image):
+        Sprite.__init__(self)
+        self.image = image
+        
+        self.rect = self.image.get_rect()
+        self.pos = (0,0)
+    def update(self):
+        self.rect.topleft = (0,0)
 
 class Healthbar(Sprite):
     def __init__(self, amount, side):
@@ -51,14 +60,16 @@ player1 = Brawler("left")
 player2 = Brawler("")
 health1 = Healthbar(hp1,"left")
 health2 = Healthbar(hp2,"")
-
+background = Background(pg.image.load("background.png").convert())
 #create shortcut for groups
 all_sprites = pg.sprite.Group()
 all_players = pg.sprite.Group()
 all_attacks = pg.sprite.Group()
+all_backdrops = pg.sprite.Group()
 #add objects to groups
 all_players.add(player2)
-all_sprites.add(player1,player2, health1, health2)
+# all_sprites.add(player1,player2, health1, health2)
+all_backdrops.add(background)
 #Game loop
 
 while Running:
@@ -125,11 +136,12 @@ while Running:
         
     #update
     all_sprites.update()
-    
+    all_backdrops.update()
     
     #draw
     #temporary background
-    screen.fill(red)
+    all_backdrops.draw(screen)
+    
     #draw sprites (fighters and healbars)
     all_sprites.draw(screen)
     #buffer display so previous frames are covered by new background

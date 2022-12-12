@@ -1,7 +1,7 @@
 import pygame as pg
 from pygame.sprite import Sprite
 from Settings import *
-pimage = pg.image.load("C:\github\introtoprogramming\introtoprogrammingfinalproject\game\playertest.png")
+
 vec = pg.math.Vector2
 
  
@@ -74,7 +74,7 @@ class Attacks(Sprite):
         Sprite.__init__(self)
         #temporary design of attack
         self.image = pg.Surface((100,200))
-        self.image.fill((0,0,255))
+        self.image.fill(())
         self.rect = self.image.get_rect()
         self.side = side
         #I need the attack box to move with the player and sense i cant instanciate the class untill later I have to do this
