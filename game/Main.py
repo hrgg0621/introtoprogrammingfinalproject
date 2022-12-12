@@ -29,6 +29,14 @@ class Background(Sprite):
         self.pos = (0,0)
     def update(self):
         self.rect.topleft = (0,0)
+class Button(Sprite):
+    def __init__(self,x,y,):
+        Sprite.__init__(self)
+        self.image = pg.image.load("startbutton.jpg").convert()
+        self.rect = self.image.get_rect()
+        
+        self.rect.midbottom = (x,y)
+
 
 class Healthbar(Sprite):
     def __init__(self, amount, side):
@@ -61,6 +69,8 @@ player2 = Brawler("")
 health1 = Healthbar(hp1,"left")
 health2 = Healthbar(hp2,"")
 background = Background(pg.image.load("background.png").convert())
+batlleground = Background(pg.image.load("battleground.jpg").convert())
+start = Button((WIDTH/2), HIEGHT/2)
 #create shortcut for groups
 all_sprites = pg.sprite.Group()
 all_players = pg.sprite.Group()
@@ -70,6 +80,7 @@ all_backdrops = pg.sprite.Group()
 all_players.add(player2)
 # all_sprites.add(player1,player2, health1, health2)
 all_backdrops.add(background)
+all_sprites.add(start)
 #Game loop
 
 while Running:
@@ -97,6 +108,13 @@ while Running:
                 all_sprites.add(attack2)
                 all_attacks.add(attack2)
                 attacking = True
+        #detect the mouse and what it clicks on for the button to start the game, this took ages to find on pygame directory
+        if event.type == pg.MOUSEBUTTONDOWN:           
+            if start.rect.collidepoint(pg.mouse.get_pos()):
+                all_backdrops.remove(background)
+                all_backdrops.add(batlleground)
+                all_sprites.add(player1,player2,health1,health2)
+                all_sprites.remove(start)
     
         #kill the attack class when the button is released
         if event.type == pg.KEYUP:
