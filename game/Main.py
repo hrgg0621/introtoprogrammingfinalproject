@@ -1,10 +1,14 @@
 '''Sources:
-Pygame: https://www.pygame.org/news
+[w3Schools](https://www.w3schools.com/python/default.asp)
+* [PyGame](https://www.pygame.org/docs/)
+* [Automate The Boring Stuff](https://automatetheboringstuff.com/)
+
 '''
 import pygame as pg
 from pygame.sprite import Sprite
 from Settings import *
-from characters import *
+
+
 
 pg.init
 #variable for game loop
@@ -19,6 +23,94 @@ pg.time.Clock.__init__
 screen = pg.display.set_mode((WIDTH, HIEGHT))
 pg.display.set_caption("Brawler")
 #classes
+
+
+ 
+class Brawler(Sprite):
+    def __init__(self, side,image):
+        Sprite.__init__(self)
+        
+        
+        
+        #used to differenciate player classes on each side so dif controls and stuff
+        self.side = side
+        self.image = image
+        
+        
+        self.rect = self.image.get_rect()
+        #use the "side" variable to change the starting area to either side
+        
+        if self.side == "left":
+            self.pos = vec(100,HIEGHT)
+        else:
+            self.pos = vec((WIDTH - 100),HIEGHT)
+        #cords are universal for both classes so "side" isn't neccesary here
+        self.vel = vec(0,0)
+        self.acc = vec(0,0)
+    def controls(self):
+       #making my life easier
+        key = pg.key.get_pressed()
+        #using "side" to change the key inputs for walking depending on what side the fighter is located
+        if self.side == "left":
+        #move to the right
+            if key[pg.K_d] and attacking == False:
+            
+                self.acc.x = 5
+                
+        #move to the left
+            if key[pg.K_a] and attacking == False:
+                
+                self.acc.x = -5
+       #I could use a "if" statement here but this is just easier
+        else:
+            if key[pg.K_LEFT] and attacking == False:
+                self.acc.x = -5
+            if key[pg.K_RIGHT] and attacking == False:
+                self.acc.x = 5
+
+            
+    
+        
+        
+            
+    def update(self):
+        #updating acc to 0,0 prevents fighters from running forever
+        self.acc = vec(0,0)
+        #calling the function of the controls so they can move the player
+        self.controls()
+        
+        # friction
+        self.acc.x += self.vel.x * -0.5
+        #Actually moving the player when the inputs are changed by the controls
+        self.vel += self.acc
+        self.pos += self.vel + 0.5 * self.acc
+        #Staying on the screen, really simple method but very effective
+        if self.pos.x > 1000:
+            self.pos.x = 1000
+        if self.pos.x < 0:
+            self.pos.x = 0
+        #once everything is acounted for the pos of fighter is connected to their rect so the movement happens
+        self.rect.midbottom = self.pos
+    
+
+      
+class Attacks(Sprite):
+    def __init__(self,posx, posy, side):
+        Sprite.__init__(self)
+        #temporary design of attack
+        self.image = pg.image.load("fire.jpg").convert()
+        
+        self.rect = self.image.get_rect()
+        self.side = side
+        #I need the attack box to move with the player and sense i cant instanciate the class untill later I have to do this
+        self.pos = vec(posx,posy)
+    def update(self):
+        #The players can't move and attack at the same time so I just need to set the pos equal to the rect
+        if self.side == "left":
+            self.rect.bottomleft = self.pos
+        else:
+            self.rect.bottomright = self.pos
+
 
 class Background(Sprite):
     def __init__(self, image):
@@ -64,13 +156,15 @@ class Healthbar(Sprite):
 #make pg.time.clock easier to access
 clock = pg.time.Clock()
 #instanciate classes
-player1 = Brawler("left")
-player2 = Brawler("")
+player1 = Brawler("left",pg.image.load("player1_idle.jpg").convert())
+player2 = Brawler("",pg.image.load("plauer2_idle.jpg").convert())
 health1 = Healthbar(hp1,"left")
 health2 = Healthbar(hp2,"")
 background = Background(pg.image.load("background.png").convert())
 batlleground = Background(pg.image.load("battleground.jpg").convert())
 start = Button((WIDTH/2), HIEGHT/2)
+#color keys
+
 #create shortcut for groups
 all_sprites = pg.sprite.Group()
 all_players = pg.sprite.Group()
@@ -97,17 +191,18 @@ while Running:
         #insanciate the attack class when the button is pressed
         if event.type == pg.KEYDOWN: 
             if event.key == pg.K_f:
-                attack1 = Attacks((player1.pos.x + 50), player1.pos.y, "left")
+                attack1 = Attacks((player1.pos.x + 55), player1.pos.y, "left")
                 all_attacks.add(attack1)
                 all_sprites.add(attack1)
                
                 #change variable so players cant walk and attack at the same time
                 attacking = True
             if event.key == pg.K_RALT:
-                attack2 = Attacks((player2.pos.x -50),player2.pos.y,"")
+                attack2 = Attacks((player2.pos.x -55),player2.pos.y,"")
                 all_sprites.add(attack2)
                 all_attacks.add(attack2)
                 attacking = True
+                
         #detect the mouse and what it clicks on for the button to start the game, this took ages to find on pygame directory
         if event.type == pg.MOUSEBUTTONDOWN:           
             if start.rect.collidepoint(pg.mouse.get_pos()):
@@ -135,17 +230,23 @@ while Running:
         player1.pos -= player1.vel + 0.5 * player1.acc
         player2.pos -= player2.vel + 0.5 * player2.acc
     hits = pg.sprite.spritecollide(player2,all_attacks,False)
-    if hits:
+    if hits and health2.amount > 5:
         health2.amount -= 5
-        
+    #end game when health bar is empty
+    if health2.amount == 5:
+        print("player1 wins")
+        Running = False
     hits2 = pg.sprite.spritecollide(player1,all_attacks,False)
-    if hits2:
+    if hits2 and health1.amount > 5:
         health1.amount -= 5
-    #find a winner
-    if health1.amount <= 0:
-        print("player1 loses")
-  
+        
+    if health1.amount == 5:
+        print("player2 wins")
+        Running = False
+        
     
+    
+        
                 
                 
 

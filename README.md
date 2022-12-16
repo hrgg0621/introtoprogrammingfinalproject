@@ -5,11 +5,14 @@
 
 ## Description
 
-* 2d platform game that has 2 players fighting in a street fighter kind of style
+* 2d fighting game where two robots shoot flames at eachother
 
 ## Getting Started
 *Download file
 *Check that you meet all the dependencies (listed below)
+-pygame
+-settings file (in folder with main)
+-the sprite images (included in introtoprogrammingfinal project folder)
 ### Dependencies
 
 *Need the Pygame library
@@ -19,15 +22,15 @@
 ### Installing
 
 * How/where to download your program
+install via github 
+install pygame at https://www.pygame.org/news
 * Any modifications needed to be made to files/folders
-
+none needed
 ### Executing program
 
 * How to run the program
-* Step-by-step bullets
-```
-code blocks for commands
-```
+just press run; if all dependicies are met the game will function
+movement is listed under the (player name).controls() function if you want to rebind
 
 ## Help
 
@@ -40,14 +43,11 @@ command to run if program contains helper info
 
 Contributors names and contact info
 
-ex. Chris Cozort  
-ex. ccozort@bcp.org
+Henry Gurich 
+HenryGurich@gmail.com
 
 ## Version History
 
-* 0.2
-    * Various bug fixes and optimizations
-    * See [commit change]() or See [release history]()
 * 0.1
     * Initial Release
 
